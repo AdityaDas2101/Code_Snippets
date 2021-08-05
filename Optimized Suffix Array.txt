@@ -1,0 +1,67 @@
+// to construct suffix array of a given string int O(n(logn)) by using count sort and cyclic shifts
+
+void count_sort(vector<ll> &p, vector<ll> &c){
+    int n = p.size();
+    vector<ll> cnt(n);
+    for(auto x: c){
+        cnt[x]++;
+    }
+    vector<ll> p_new(n);
+    vector<ll> pos(n);
+    pos[0] = 0;
+    for(ll i = 1; i< n; i++){
+        pos[i] = pos[i-1] + cnt[i-1];
+    }
+    for(auto x: p){
+        ll i = c[x];
+        p_new[pos[i]] = x;
+        pos[i]++;
+    }
+    p = p_new;
+}
+
+vector<ll> contructSuffixArray(string &s)
+{
+    s+="$";
+    ll n=s.length();
+    vector<ll> p(n),c(n);  //p[]-> suffix array   c[]-> equivalance class
+ // calculating for k=0;
+    vector<pair<char,ll>> a(n);
+    fr(i,n)
+    a[i]={s[i],i};
+    sort(a.begin(),a.end());
+    fr(i,n)
+    p[i]=a[i].second;
+    c[p[0]]=0;
+    ffr(i,1,n-1)
+    {
+        if(a[i].first==a[i-1].first)
+        c[p[i]]=c[p[i-1]];
+        else
+        c[p[i]]=c[p[i-1]] + 1;
+    }
+ // making the transitions from k->k+1 while(2^k<=n)
+    ll k=0;
+    while((1<<k)<=n)
+    {
+        fr(i,n)
+        p[i] = (p[i] - (1<<k) + n) % n;
+        count_sort(p, c);
+        vector<ll> c_new(n);
+        c_new[p[0]] = 0;
+        ffr(i,1,n-1)
+        {
+            pair<ll,ll> prev = {c[p[i-1]], c[(p[i-1] + (1<<k)) % n]};
+            pair<ll,ll> now = {c[p[i]], c[(p[i] + (1<<k)) % n]};
+            if(now == prev)
+                c_new[p[i]] = c_new[p[i-1]];
+            else
+                c_new[p[i]] = c_new[p[i-1]] + 1;
+        }
+        c = c_new;
+        k++;
+    }
+    // fr(i,n)
+    // cout<<p[i]<<" "<<s.substr(p[i],n)<<"\n";
+    return p;
+}

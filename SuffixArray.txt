@@ -1,11 +1,50 @@
-// To construct suffix array of a given string
+// To construct suffix array of a given string in O(nlogn) instead of O(nlogn)^2) as we will use radix sort instead od builtin O(nlogn) sort
 
+
+void radix_sort(vector<pair<pair<ll,ll>,ll>> &vpp)
+{
+    ll n=vpp.size();
+    {                      // these brackets are to limit the scope of temp    
+        vector<vector<pair<pair<ll,ll>,ll>>> temp(n);
+        for(auto x:vpp)
+        {
+            temp[x.first.second].pb(x);
+        } 
+        ll in=0;
+        fr(i,temp.size())
+        {
+            fr(j,temp[i].size())
+            {
+                vpp[in]=temp[i][j];
+                in++;
+            }
+        }
+    }                      // so that we dont need to create another temp
+
+    {                      // these brackets are to limit the scope of temp
+        vector<vector<pair<pair<ll,ll>,ll>>> temp(n);
+        for(auto x:vpp)
+        {
+            temp[x.first.first].pb(x);
+        } 
+        ll in=0;
+        fr(i,temp.size())
+        {
+            fr(j,temp[i].size())
+            {
+                vpp[in]=temp[i][j];
+                in++;
+            }
+        }
+    }                       // so that we dont need to create another temp
+    return;
+}
 
 vector<ll> contructSuffixArray(string &s)
 {
     s+="$";
     ll n=s.length();
-    vector<ll> p(n),c(n);  //p[]-> suffix array     c[]-> equivalance class
+    vector<ll> p(n),c(n);  //p[]-> suffix array   c[]-> equivalance class
  // calculating for k=0;
     vector<pair<char,ll>> a(n);
     fr(i,n)
@@ -28,7 +67,7 @@ vector<ll> contructSuffixArray(string &s)
         vector<pair<pair<ll,ll>,ll>> vpp(n);
         fr(i,n)
         vpp[i]={{c[i],c[(i+(1<<k))%n]},i};
-        sort(vpp.begin(),vpp.end());
+        radix_sort(vpp);                // we use radix sort to optimize 
         fr(i,n)
         p[i]=vpp[i].second;
         c[p[0]]=0;

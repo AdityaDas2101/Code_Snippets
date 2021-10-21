@@ -1,0 +1,13 @@
+// Simple Sieve Of Eratosthenes
+
+bool prime[100001];
+void sieve()
+{
+    memset(prime,true,sizeof(prime));
+    prime[0]=prime[1]=false;
+    for(ll i=2;i*i<100001;i++)
+    if(prime[i]==true)
+    for(ll j=i*i;j<100001;j+=i)
+    prime[j]=false;
+    return;
+}

@@ -1,0 +1,18 @@
+//  Smallest prime factor in O(1)
+
+
+vector<ll> primef(5000001,-1);
+void primefact()
+{
+    for(ll i=2;i<5000001;i++)
+    {
+        if(primef[i]==-1)
+        {
+            primef[i]=i;
+            for(ll j=i*i;j<5000001;j+=i)
+            if(primef[j]==-1)
+            primef[j]=i;
+        }
+    }
+    return ;
+}
